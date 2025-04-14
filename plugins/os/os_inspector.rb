@@ -84,7 +84,7 @@ module Machinery
       return unless os_release
 
       result = Hash.new
-      key_value_pairs = Hash[os_release.split("\n").reject(&:empty?).map { |l| l.split("=") }]
+      key_value_pairs = Hash[os_release.split("\n").reject(&:empty?).reject!{ |item| item.start_with?('#') }.map { |l| l.split("=") }]
       key_value_pairs.each_pair do |k, v|
         result[k.downcase] = v.strip.gsub(/^"|"$/, "")
       end
@@ -111,12 +111,13 @@ module Machinery
       # return pretty_name as name as it contains the actual full length
       # name instead of an abbreviation
       os = Os.for(result["pretty_name"] || result["name"])
-      os.version = result["version"]
 
       # since Tumbleweed does no longer store the version number in the
       # "version" property, we've to read from the "version_id" property
-      if os.version == "Tumbleweed" || os.name == "openSUSE Tumbleweed"
+      if os.version == "Tumbleweed" || os.name == "openSUSE Tumbleweed" || os.name == "opensuse-tumbleweed"
         os.version = result["version_id"]
+      else
+        os.version = result["version"]
       end
 
       os
