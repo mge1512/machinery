@@ -84,7 +84,7 @@ module Machinery
       return unless os_release
 
       result = Hash.new
-      key_value_pairs = Hash[os_release.split("\n").reject(&:empty?).reject!{ |item| item.start_with?('#') }.map { |l| l.split("=") }]
+      key_value_pairs = Hash[os_release.split("\n").reject(&:empty?).reject { |item| item.start_with?('#') }.map { |l| l.split("=") }]
       key_value_pairs.each_pair do |k, v|
         result[k.downcase] = v.strip.gsub(/^"|"$/, "")
       end
